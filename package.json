@@ -1,0 +1,19 @@
+{
+  "name": "tagger",
+  "version": "1.0.0",
+  "description": "A utility for organizing and tagging mp3s",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/philipd/tagger.git"
+  },
+  "author": "philipd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/philipd/tagger/issues"
+  },
+  "homepage": "https://github.com/philipd/tagger#readme"
+}
