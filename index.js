@@ -5,9 +5,10 @@ const json = JSON;
 
 
 const config = json.parse(fs.readFileSync('config.json'));
-
 const dir = config.taggerDirectory;
 
-sh.ln('--', 'test/testfile', dir+uuid());
+// sh.ln('--', 'test/testfile', dir+uuid());
 
-console.log(sh.ls(dir));
+for (let item of sh.ls(dir)) {
+  console.log(item);
+}
