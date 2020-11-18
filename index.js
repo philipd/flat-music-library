@@ -3,6 +3,8 @@ const uuid = require('uuid').v4;
 const sh = require('shelljs');
 const json = JSON;
 const walk = require('walk');
+// const NodeID3 = require('node-id3');
+const mm = require('music-metadata');
 
 const isMp3 = function(filepath) {
   return filepath.substring(filepath.length-3, filepath.length) === 'mp3';
@@ -14,6 +16,17 @@ const hasGuid = function(filepath) {
 
 const linkExists = function(filepath) {
   return true;
+}
+
+const testTags = function(filepath) {
+  // NodeID3.read(filepath, function(e, t) { console.log(t); });
+  mm.parseFile(filepath)
+    .then( metadata => {
+      console.log(metadata.common.title);
+    })
+    .catch( e => {
+      console.log(e);
+    })
 }
 
 
@@ -28,12 +41,9 @@ console.log(dir);
 
 const walker = walk.walk(dir, options);
 
-// walker.on("name", (root, nodeNamesArray) => {
-// });
-
 walker.on("file", (root, fileStats, next) => {
-  console.log(root+fileStats.name);
-  console.log(isMp3(fileStats.name));
+  const filepath = root + "/" + fileStats.name;
+  isMp3(fileStats.name) ? testTags(filepath) : null;
   next();
 
   // file is an mp3?
