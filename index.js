@@ -7,11 +7,11 @@ const id3 = require('node-id3');
 const mm = require('music-metadata');
 
 const config = json.parse(fs.readFileSync('config.json'));
-const sourceDir = config.taggerDirectory;
+const sourceDir = config.sourceDirectory;
 const destDir = config.libraryDirectory;
 
 const options = {
-  // followLinks: false,
+  followLinks: true,
   filters: ["Temp", "_Temp"]
 };
 
@@ -29,18 +29,19 @@ const setGuid = function(filepath) {
   if(tags.userDefinedText && tags.userDefinedText.find( x => x.description === 'guid' )) {
     // guid exists; do nothing
   } else {
-    console.log('inside');
     const newTags = {
       TXXX: [ { description: 'guid', value: uuid() } ]
     };
     const success = id3.update(newTags, filepath);
-    id3.read(filepath, function(err, tags) { console.log(tags.raw); });
+    // id3.read(filepath, function(err, tags) { console.log(tags.raw); });
   }
 }
 
 const makeLink = function(filepath) {
-  const guid = id3.read(filepath).userDefinedText.find( x => x.description === 'guid').value;
-  // console.log(destDir+'/'+guid+'.mp3');
+  const tags = id3.read(filepath);
+  console.log(tags.artist, tags.title);
+  const guid = tags.userDefinedText.find( x => x.description === 'guid').value;
+  
   sh.ln(filepath, destDir+'/'+guid+'.mp3')
 }
 
@@ -60,13 +61,6 @@ walker.on("file", (root, fileStats, next) => {
   
   next();
 
-  // file is an mp3?
-    // continue
-  // check for guid tag
-      // no guid tag? add one
-  // check for link
-      // 2. file is an mp3
-  // create a link
 });
 
 walker.on("end", function () {
