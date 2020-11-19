@@ -3,7 +3,7 @@ const uuid = require('uuid').v4;
 const sh = require('shelljs');
 const json = JSON;
 const walk = require('walk');
-const NodeID3 = require('node-id3');
+const id3 = require('node-id3');
 const mm = require('music-metadata');
 
 const isMp3 = function(filepath) {
@@ -22,12 +22,19 @@ const linkExists = function(filepath) {
   return true;
 }
 
-const testTags = function(filepath) {
-  const tags = {
-    TXXX: [ { description: 'guid', value: uuid() } ]
+const setGuid = function(filepath) {
+  const tags = id3.read(filepath);
+
+  if(tags.userDefinedText && tags.userDefinedText.find( x => x.description === 'guid' )) {
+    // guid exists; do nothing
+  } else {
+    console.log('inside');
+    const newTags = {
+      TXXX: [ { description: 'guid', value: uuid() } ]
+    };
+    const success = id3.update(newTags, filepath);
+    id3.read(filepath, function(e, t) { console.log(t.raw); });
   }
-  const success = NodeID3.update(tags, filepath);
-  NodeID3.read(filepath, function(e, t) { console.log(t.raw); });
 }
 
 
@@ -44,8 +51,13 @@ const walker = walk.walk(dir, options);
 
 walker.on("file", (root, fileStats, next) => {
   const filepath = root + "/" + fileStats.name;
-  isMp3(fileStats.name) ? testTags(filepath) : null;
-  // isMp3(fileStats.name) ? console.log(getGuid(filepath)) : null;
+
+  if(isMp3(fileStats.name)) {
+    // set guid if it doesn't exist
+    setGuid(filepath);
+    // create link if it doesn't exist
+  } 
+  
   next();
 
   // file is an mp3?
