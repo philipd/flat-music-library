@@ -6,16 +6,17 @@ const walk = require('walk');
 const id3 = require('node-id3');
 const mm = require('music-metadata');
 
+const config = json.parse(fs.readFileSync('config.json'));
+const sourceDir = config.taggerDirectory;
+const destDir = config.libraryDirectory;
+
+const options = {
+  // followLinks: false,
+  filters: ["Temp", "_Temp"]
+};
+
 const isMp3 = function(filepath) {
   return filepath.substring(filepath.length-3, filepath.length) === 'mp3';
-}
-
-const getGuid = function(filepath) {
-  // let result = false;
-  // NodeID3.read(filepath, function(e, t) { 
-  //   result = t.TXXX ? t.TXXX.find( element => element.description === 'guid' ) : false; 
-  // });
-  // return result;
 }
 
 const linkExists = function(filepath) {
@@ -33,21 +34,19 @@ const setGuid = function(filepath) {
       TXXX: [ { description: 'guid', value: uuid() } ]
     };
     const success = id3.update(newTags, filepath);
-    id3.read(filepath, function(e, t) { console.log(t.raw); });
+    id3.read(filepath, function(err, tags) { console.log(tags.raw); });
   }
 }
 
+const makeLink = function(filepath) {
+  const guid = id3.read(filepath).userDefinedText.find( x => x.description === 'guid').value;
+  // console.log(destDir+'/'+guid+'.mp3');
+  sh.ln(filepath, destDir+'/'+guid+'.mp3')
+}
 
-const config = json.parse(fs.readFileSync('config.json'));
-const dir = config.taggerDirectory;
-const options = {
-  // followLinks: false,
-  filters: ["Temp", "_Temp"]
-};
+console.log(sourceDir);
 
-console.log(dir);
-
-const walker = walk.walk(dir, options);
+const walker = walk.walk(sourceDir, options);
 
 walker.on("file", (root, fileStats, next) => {
   const filepath = root + "/" + fileStats.name;
@@ -56,6 +55,7 @@ walker.on("file", (root, fileStats, next) => {
     // set guid if it doesn't exist
     setGuid(filepath);
     // create link if it doesn't exist
+    makeLink(filepath);
   } 
   
   next();
