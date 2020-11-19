@@ -3,7 +3,7 @@ const uuid = require('uuid').v4;
 const sh = require('shelljs');
 const json = JSON;
 const walk = require('walk');
-// const NodeID3 = require('node-id3');
+const NodeID3 = require('node-id3');
 const mm = require('music-metadata');
 
 const isMp3 = function(filepath) {
