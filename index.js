@@ -10,8 +10,12 @@ const isMp3 = function(filepath) {
   return filepath.substring(filepath.length-3, filepath.length) === 'mp3';
 }
 
-const hasGuid = function(filepath) {
-  return true;
+const getGuid = function(filepath) {
+  // let result = false;
+  // NodeID3.read(filepath, function(e, t) { 
+  //   result = t.TXXX ? t.TXXX.find( element => element.description === 'guid' ) : false; 
+  // });
+  // return result;
 }
 
 const linkExists = function(filepath) {
@@ -19,14 +23,11 @@ const linkExists = function(filepath) {
 }
 
 const testTags = function(filepath) {
-  // NodeID3.read(filepath, function(e, t) { console.log(t); });
-  mm.parseFile(filepath)
-    .then( metadata => {
-      console.log(metadata.native["ID3v2.4"]);
-    })
-    .catch( e => {
-      console.log(e);
-    })
+  const tags = {
+    TXXX: [ { description: 'guid', value: uuid() } ]
+  }
+  const success = NodeID3.update(tags, filepath);
+  NodeID3.read(filepath, function(e, t) { console.log(t.raw); });
 }
 
 
@@ -44,6 +45,7 @@ const walker = walk.walk(dir, options);
 walker.on("file", (root, fileStats, next) => {
   const filepath = root + "/" + fileStats.name;
   isMp3(fileStats.name) ? testTags(filepath) : null;
+  // isMp3(fileStats.name) ? console.log(getGuid(filepath)) : null;
   next();
 
   // file is an mp3?
