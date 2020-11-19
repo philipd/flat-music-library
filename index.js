@@ -22,7 +22,7 @@ const testTags = function(filepath) {
   // NodeID3.read(filepath, function(e, t) { console.log(t); });
   mm.parseFile(filepath)
     .then( metadata => {
-      console.log(metadata.common.title);
+      console.log(metadata.native["ID3v2.4"]);
     })
     .catch( e => {
       console.log(e);
