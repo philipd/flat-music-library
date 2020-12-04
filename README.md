@@ -6,7 +6,7 @@ This software is released under an MIT license.
 
 ## Introduction
 
-flat-music-library is a work in progress, designed to solve problems with library software that expect files to retain a constant file structure over time.
+flat-music-library is a work in progress, designed to solve problems with music library software products that expect audio files to retain a constant file structure over time.
 
 flat-music-library allows you to rename, reorganize, and restructure files and directories in your music library without breaking the ability of library software to track those files.
 
