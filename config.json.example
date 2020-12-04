@@ -1,3 +1,4 @@
 {
-  "taggerDirectory": "/home/user/my-music-directory"
+  "sourceDirectory": "",
+  "libraryDirectory": ""
 }
