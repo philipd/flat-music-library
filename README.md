@@ -24,5 +24,5 @@ Your filesystem needs to support hard links, and your files will need to exist o
 
 ## Installation
 
-```git clone``` or ```wget``` the directory, then ```npm install``` and ```npm start```
+```git clone``` or ```wget``` the directory, then ```npm install```. Make a copy of config.json.example, rename it to config.json and edit it with your chosen configuration parameters. Run the program with ```npm start```.
 
